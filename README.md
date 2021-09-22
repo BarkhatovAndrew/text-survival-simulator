@@ -1,2 +1,2 @@
-# text-homeless-simulator
+# Homeless Simulator
 simple homeless simulator
