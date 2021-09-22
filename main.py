@@ -38,10 +38,16 @@ class Do:
             game = False
 
     def begg(self):
-        self.health -= 5
-        self.money += 10
-        self.fatigue -= 5
-        print('You begged')
+        self.chance = random.randint(1, 10)
+        if self.chance == 1:
+            self.chance = random.randint(10, 50)
+            print(f"Wow! It's a nice day today! You earned an extra {self.chance}$")
+            self.money += self.chance
+        else:
+            self.health -= 5
+            self.money += 10
+            self.fatigue -= 5
+            print('You earned 10$')
 
     def sleep(self):
         self.health -= 5
@@ -66,7 +72,7 @@ class Do:
             print(self.event)
 
     def get_status(self):
-        print(f'Health: {self.health}, Money: {self.money}, Fatigue: {self.fatigue}')
+        print(f'Health: {self.health}, Money: {self.money}$, Fatigue: {self.fatigue}')
 
 
 # Game initialization
