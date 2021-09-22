@@ -1,5 +1,4 @@
 import random
-import time
 
 # Welcome & Rules of the game
 
@@ -9,9 +8,12 @@ input(f'Hello, {gamers_name}! To continue press "Enter"')
 input('You have 3 indicators: health, money and fatigue')
 input('Each of the indicators has a scale from 0 to 100')
 input('If one of the indicators reaches 0, you will lose')
-input('Each turn you can do one of three actions: sleep, work or eat')
+input('Each turn you can do one of three actions: sleep, begg or eat')
 input('All actions affect your characteristics')
-print('Type here what you want to do: work, sleep or eat')
+input('Type here what you want to do: begg, sleep or eat')
+input('You can also write a status to find out your characteristics')
+print('Now you start the game')
+print('-----------------------------------------------------------')
 
 
 # Do something
@@ -35,11 +37,11 @@ class Do:
             global game
             game = False
 
-    def work(self):
+    def begg(self):
         self.health -= 5
         self.money += 10
         self.fatigue -= 5
-        print('You worked')
+        print('You begged')
 
     def sleep(self):
         self.health -= 5
@@ -67,14 +69,18 @@ class Do:
         print(f'Health: {self.health}, Money: {self.money}, Fatigue: {self.fatigue}')
 
 
+# Game initialization
+
 count = 0
 game = True
 character = Do()
 
+# Game start
+
 while game:
     turn = input('What do we do: ')
-    if turn.lower() == 'work':
-        character.work()
+    if turn.lower() == 'begg':
+        character.begg()
         character.if_maximum_points()
         character.lose_conditions()
         character.random_event_drop_health()
