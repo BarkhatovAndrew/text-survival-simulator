@@ -3,16 +3,18 @@ import random
 # Welcome & Rules of the game
 
 print('Hello! This is simple homeless simulator')
-gamers_name = input('Just enter your name to start the game: ')
-input(f'Hello, {gamers_name}! To continue press "Enter"')
+name = input('Just enter your name to start the game: ')
+input(f'Hello, {name}! To continue press "Enter"')
 input('You have 3 indicators: health, money and fatigue')
-input('Each of the indicators has a scale from 0 to 100')
+input('Fatigue and health have a scale from 0 to 100. The amount of money is unlimited')
 input('If one of the indicators reaches 0, you will lose')
 input('Each turn you can do one of three actions: sleep, begg or eat')
 input('All actions affect your characteristics')
-input('Type here what you want to do: begg, sleep or eat')
-input('You can also write a status to find out your characteristics')
-print('Now you start the game')
+input('"Begg" increases the amount of money, "Sleep" reduces fatigue and "Eat" heals you')
+input('Sometimes it can happen random events that will affect you')
+input('You can also write "Status" to find out your characteristics')
+input('Now you can start the game. Press Enter to start')
+print('Type here what you want to do: beg, sleep, eat or status')
 print('-----------------------------------------------------------')
 
 
@@ -44,10 +46,16 @@ class Do:
             print(f"Wow! It's a nice day today! You earned an extra {self.chance}$")
             self.money += self.chance
         else:
-            self.health -= 5
-            self.money += 10
-            self.fatigue -= 5
-            print('You earned 10$')
+            if buyer.hat == 0:
+                self.health -= 5
+                self.money += 10
+                self.fatigue -= 5
+                print('You earned 10$')
+            else:
+                self.fatigue -= 3
+                self.health -= 5
+                self.money += 10
+                print('You earned 10$')
 
     def sleep(self):
         self.health -= 5
@@ -75,13 +83,33 @@ class Do:
         print(f'Health: {self.health}, Money: {self.money}$, Fatigue: {self.fatigue}')
 
 
+class Shop:
+    def __init__(self):
+        self.hat = 0
+
+    def if_already_have(self):
+        if self.hat == 1:
+            print('You already have a hat')
+
+    def buy_hat(self):
+        if character.money >= 31:
+            character.money -= 30
+            self.hat = 1
+            print('Now you get tired less when begging')
+        else:
+            print('You have no money')
+
+
 # Game initialization
 
 count = 0
 game = True
 character = Do()
+buyer = Shop()
 
 # Game start
+
+character.get_status()
 
 while game:
     turn = input('What do we do: ')
@@ -105,6 +133,15 @@ while game:
         character.lose_conditions()
         character.random_event_drop_health()
         count += 1
+
+    if turn.lower() == 'shop':
+        print('Hat - 30$')
+        buy = input('What do you want to buy: ')
+        if buy.lower() == 'hat':
+            if buyer.hat == 0:
+                buyer.buy_hat()
+            else:
+                buyer.if_already_have()
 
     if turn.lower() == 'status':
         character.get_status()
