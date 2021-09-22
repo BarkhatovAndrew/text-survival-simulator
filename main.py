@@ -35,9 +35,11 @@ class Do:
     def lose_conditions(self):
         if self.fatigue <= 0 or self.health <= 0 or self.money <= 0:
             print('You lose. Game over!')
-            print(f'You lived for {count} days')
+            print(f'You lived for {day_count} days')
             global game
             game = False
+
+    # Begging
 
     def begg(self):
         self.chance = random.randint(1, 10)
@@ -57,17 +59,23 @@ class Do:
                 self.money += 10
                 print('You earned 10$')
 
+    # Sleep
+
     def sleep(self):
         self.health -= 5
         self.money -= 10
         self.fatigue += 15
         print('You slept')
 
+    # Eat
+
     def eat(self):
         self.health += 15
         self.money -= 15
         self.fatigue -= 5
         print('You ate')
+
+    # Random events, drop your health
 
     def random_event_drop_health(self):
         self.random_events = ['Oh, shit! You were beaten by the police. Your health dropped',
@@ -79,6 +87,8 @@ class Do:
             self.health -= 20
             print(self.event)
 
+    # Character Status
+
     def get_status(self):
         print(f'Health: {self.health}, Money: {self.money}$, Fatigue: {self.fatigue}')
 
@@ -86,6 +96,10 @@ class Do:
 class Shop:
     def __init__(self):
         self.hat = 0
+        self.stimulator = 0
+        self.stimulator_count = 10
+
+    # Hat
 
     def if_already_have(self):
         if self.hat == 1:
@@ -99,10 +113,33 @@ class Shop:
         else:
             print('You have no money')
 
+    # Stimulator
+
+    def buy_stimulator(self):
+        if character.money >= 31:
+            character.money -= 30
+            self.stimulator += 1
+            print(
+                'You will not get tired and want to eat for 10 days, but after health and fatigue will decrease by 40')
+        else:
+            print('You have no money')
+
+    # 10 Stimulator's Days
+
+    def is_stimulator_end(self):
+        if self.stimulator == 1:
+            if self.stimulator_count != 0:
+                self.stimulator_count -= 1
+            else:
+                character.health -= 40
+                character.fatigue -= 40
+                self.stimulator = 0
+                self.stimulator_count = 10
+
 
 # Game initialization
 
-count = 0
+day_count = 0
 game = True
 character = Do()
 buyer = Shop()
@@ -113,29 +150,52 @@ character.get_status()
 
 while game:
     turn = input('What do we do: ')
+
+    # Begging Turn
+
     if turn.lower() == 'begg':
         character.begg()
         character.if_maximum_points()
         character.lose_conditions()
         character.random_event_drop_health()
-        count += 1
+        buyer.is_stimulator_end()
+        day_count += 1
+        if buyer.stimulator == 1:
+            if buyer.hat == 0:
+                character.health += 5
+                character.fatigue += 5
+            else:
+                character.health += 5
+                character.fatigue += 3
+
+    # Sleeping Turn
 
     if turn.lower() == 'sleep':
         character.sleep()
         character.if_maximum_points()
         character.lose_conditions()
         character.random_event_drop_health()
-        count += 1
+        buyer.is_stimulator_end()
+        day_count += 1
+        if buyer.stimulator == 1:
+            character.health += 5
+
+    # Eating Turn
 
     if turn.lower() == 'eat':
         character.eat()
         character.if_maximum_points()
         character.lose_conditions()
         character.random_event_drop_health()
-        count += 1
+        buyer.is_stimulator_end()
+        day_count += 1
+        if buyer.stimulator == 1:
+            character.fatigue += 5
+
+    # Shopping Turn
 
     if turn.lower() == 'shop':
-        print('Hat - 30$')
+        print('Hat - 30$, Stimulator - 30$')
         buy = input('What do you want to buy: ')
         if buy.lower() == 'hat':
             if buyer.hat == 0:
@@ -143,10 +203,17 @@ while game:
             else:
                 buyer.if_already_have()
 
+        if buy.lower() == 'stimulator':
+            buyer.buy_stimulator()
+
+    # Status Turn
+
     if turn.lower() == 'status':
         character.get_status()
 
+    # End Game
+
     if turn.lower() == 'stop':
         print('Game over')
-        print(f'You lived for {count} days')
+        print(f'You lived for {day_count} days')
         game = False
