@@ -14,7 +14,7 @@ input('"Begg" increases the amount of money, "Sleep" reduces fatigue and "Eat" h
 input('Sometimes it can happen random events that will affect you')
 input('You can also write "Status" to find out your characteristics')
 input('Now you can start the game. Press Enter to start')
-print('Type here what you want to do: beg, sleep, eat or status')
+print('Type here what you want to do: beg, sleep, eat, shop or status')
 print('-----------------------------------------------------------')
 
 
