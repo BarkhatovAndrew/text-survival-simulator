@@ -32,9 +32,19 @@ class Do:
         if self.fatigue > 100:
             self.fatigue = 100
 
+    def lose(self):
+        print('You lose. Game over!')
+        print(f'You lived for {day_count} days')
+        global game
+        game = False
+
     def lose_conditions(self):
         if self.fatigue <= 0 or self.health <= 0 or self.money <= 0:
-            print('You lose. Game over!')
+            self.lose()
+
+    def win_conditions(self):
+        if self.money >= 1000:
+            print('You win!')
             print(f'You lived for {day_count} days')
             global game
             game = False
@@ -44,20 +54,14 @@ class Do:
     def begg(self):
         self.chance = random.randint(1, 10)
         if self.chance == 1:
-            self.chance = random.randint(10, 50)
+            self.chance = random.randint(20, 50)
             print(f"Wow! It's a nice day today! You earned an extra {self.chance}$")
             self.money += self.chance
         else:
-            if buyer.hat == 0:
-                self.health -= 5
-                self.money += 10
-                self.fatigue -= 5
-                print('You earned 10$')
-            else:
-                self.fatigue -= 3
-                self.health -= 5
-                self.money += 10
-                print('You earned 10$')
+            self.health -= 5
+            self.money += 10
+            self.fatigue -= 5 - buyer.hat
+            print('You earned 10$')
 
     # Sleep
 
@@ -108,7 +112,7 @@ class Shop:
     def buy_hat(self):
         if character.money >= 31:
             character.money -= 30
-            self.hat = 1
+            self.hat = 3
             print('Now you get tired less when begging')
         else:
             print('You have no money')
@@ -124,6 +128,13 @@ class Shop:
         else:
             print('You have no money')
 
+    # Overdose
+
+    def overdose(self):
+        if self.stimulator == 2:
+            print('You used a stimulant until the effect of the previous one passed. You have died of an overdose.')
+            character.lose()
+
     # 10 Stimulator's Days
 
     def is_stimulator_end(self):
@@ -136,15 +147,29 @@ class Shop:
                 self.stimulator = 0
                 self.stimulator_count = 10
 
+    # Game initialization
 
-# Game initialization
 
 day_count = 0
 game = True
 character = Do()
 buyer = Shop()
 
-# Game start
+
+# Regular things every turn
+
+def regular_things():
+    character.if_maximum_points()
+    character.lose_conditions()
+    character.random_event_drop_health()
+    buyer.is_stimulator_end()
+    buyer.overdose()
+    character.win_conditions()
+    global day_count
+    day_count += 1
+
+    # Game start
+
 
 character.get_status()
 
@@ -155,42 +180,19 @@ while game:
 
     if turn.lower() == 'begg':
         character.begg()
-        character.if_maximum_points()
-        character.lose_conditions()
-        character.random_event_drop_health()
-        buyer.is_stimulator_end()
-        day_count += 1
-        if buyer.stimulator == 1:
-            if buyer.hat == 0:
-                character.health += 5
-                character.fatigue += 5
-            else:
-                character.health += 5
-                character.fatigue += 3
+        regular_things()
 
     # Sleeping Turn
 
     if turn.lower() == 'sleep':
         character.sleep()
-        character.if_maximum_points()
-        character.lose_conditions()
-        character.random_event_drop_health()
-        buyer.is_stimulator_end()
-        day_count += 1
-        if buyer.stimulator == 1:
-            character.health += 5
+        regular_things()
 
     # Eating Turn
 
     if turn.lower() == 'eat':
         character.eat()
-        character.if_maximum_points()
-        character.lose_conditions()
-        character.random_event_drop_health()
-        buyer.is_stimulator_end()
-        day_count += 1
-        if buyer.stimulator == 1:
-            character.fatigue += 5
+        regular_things()
 
     # Shopping Turn
 
@@ -211,9 +213,7 @@ while game:
     if turn.lower() == 'status':
         character.get_status()
 
-    # End Game
+    # End Game, when type stop
 
     if turn.lower() == 'stop':
-        print('Game over')
-        print(f'You lived for {day_count} days')
-        game = False
+        character.lose()
