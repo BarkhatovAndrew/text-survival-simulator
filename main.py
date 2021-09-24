@@ -106,7 +106,7 @@ class Shop:
     # Hat
 
     def if_already_have(self):
-        if self.hat == 1:
+        if self.hat == 3:
             print('You already have a hat')
 
     def buy_hat(self):
