@@ -21,6 +21,9 @@ print('-----------------------------------------------------------')
 # Do something
 
 class Do:
+    game = True
+    day_count = 0
+
     def __init__(self):
         self.health = 100
         self.money = 100
@@ -34,9 +37,8 @@ class Do:
 
     def lose(self):
         print('You lose. Game over!')
-        print(f'You lived for {day_count} days')
-        global game
-        game = False
+        print(f'You lived for {self.day_count} days')
+        self.game = False
 
     def lose_conditions(self):
         if self.fatigue <= 0 or self.health <= 0 or self.money <= 0:
@@ -45,29 +47,28 @@ class Do:
     def win_conditions(self):
         if self.money >= 1000:
             print('You win!')
-            print(f'You lived for {day_count} days')
-            global game
-            game = False
+            print(f'You lived for {self.day_count} days')
+            self.game = False
 
     # Begging
 
     def begg(self):
+        self.health -= 5
+        self.fatigue -= 5 - buyer.hat
         self.chance = random.randint(1, 10)
         if self.chance == 1:
             self.chance = random.randint(20, 50)
             print(f"Wow! It's a nice day today! You earned an extra {self.chance}$")
             self.money += self.chance
         else:
-            self.health -= 5
             self.money += 10
-            self.fatigue -= 5 - buyer.hat
             print('You earned 10$')
 
     # Sleep
 
     def sleep(self):
         self.health -= 5
-        self.money -= 10
+        self.money -= 5
         self.fatigue += 15
         print('You slept')
 
@@ -150,8 +151,6 @@ class Shop:
     # Game initialization
 
 
-day_count = 0
-game = True
 character = Do()
 buyer = Shop()
 
@@ -165,15 +164,14 @@ def regular_things():
     buyer.is_stimulator_end()
     buyer.overdose()
     character.win_conditions()
-    global day_count
-    day_count += 1
+    character.day_count += 1
 
     # Game start
 
 
 character.get_status()
 
-while game:
+while character.game:
     turn = input('What do we do: ')
 
     # Begging Turn
@@ -210,7 +208,7 @@ while game:
 
     # Status Turn
 
-    if turn.lower() == 'status':
+    if turn.lower() in ['status', 'stat']:
         character.get_status()
 
     # End Game, when type stop
