@@ -1,2 +1,2 @@
-# Homeless Simulator
+# Survival simulator
 simple text game
