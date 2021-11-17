@@ -1,2 +1,3 @@
 # Survival simulator
-simple text game
+
+A simple text game I made to practice Python and OOP.
